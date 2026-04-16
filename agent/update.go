@@ -56,6 +56,17 @@ func (f *freeBSDRestarter) Restart() error {
 	return exec.Command(f.cmd, "beszel-agent", "restart").Run()
 }
 
+type smfRestarter struct{ cmd string }
+
+func (s *smfRestarter) Restart() error {
+	// Check if the SMF service exists before attempting restart
+	if err := exec.Command(s.cmd, "list", "svc:/site/beszel-agent").Run(); err != nil {
+		return nil
+	}
+	ghupdate.ColorPrint(ghupdate.ColorYellow, "Restarting beszel-agent via SMF…")
+	return exec.Command(s.cmd, "restart", "svc:/site/beszel-agent").Run()
+}
+
 func detectRestarter() restarter {
 	if path, err := exec.LookPath("systemctl"); err == nil {
 		return &systemdRestarter{cmd: path}
@@ -69,6 +80,11 @@ func detectRestarter() restarter {
 	if path, err := exec.LookPath("service"); err == nil {
 		if runtime.GOOS == "freebsd" {
 			return &freeBSDRestarter{cmd: path}
+		}
+	}
+	if path, err := exec.LookPath("svcadm"); err == nil {
+		if runtime.GOOS == "illumos" || runtime.GOOS == "solaris" {
+			return &smfRestarter{cmd: path}
 		}
 	}
 	return nil

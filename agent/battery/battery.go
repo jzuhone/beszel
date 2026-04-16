@@ -1,3 +1,5 @@
+//go:build !freebsd && !illumos && !solaris
+
 // Package battery provides functions to check if the system has a battery and return the charge state and percentage.
 package battery
 

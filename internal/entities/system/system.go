@@ -117,6 +117,7 @@ const (
 	Darwin
 	Windows
 	Freebsd
+	Illumos
 )
 
 type ConnectionType = uint8

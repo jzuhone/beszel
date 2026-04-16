@@ -58,6 +58,14 @@ func (a *Agent) refreshSystemDetails() {
 		} else {
 			a.systemDetails.OsName = "FreeBSD"
 		}
+	} else if runtime.GOOS == "illumos" || runtime.GOOS == "solaris" {
+		a.systemDetails.Os = system.Illumos
+		a.systemDetails.Kernel, _ = host.KernelVersion()
+		if prettyName, err := getOsPrettyName(); err == nil {
+			a.systemDetails.OsName = prettyName
+		} else {
+			a.systemDetails.OsName = platform
+		}
 	} else {
 		a.systemDetails.Os = system.Linux
 		a.systemDetails.OsName = hostInfo.OperatingSystem
@@ -94,7 +102,11 @@ func (a *Agent) refreshSystemDetails() {
 	// total memory
 	a.systemDetails.MemoryTotal = hostInfo.MemTotal
 	if a.systemDetails.MemoryTotal == 0 {
-		if v, err := mem.VirtualMemory(); err == nil {
+		v, err := mem.VirtualMemory()
+		if err != nil {
+			v, err = illumosVirtualMemory()
+		}
+		if err == nil {
 			a.systemDetails.MemoryTotal = v.Total
 		}
 	}
@@ -168,7 +180,11 @@ func (a *Agent) getSystemStats(cacheTimeMs uint16) system.Stats {
 	}
 
 	// memory
-	if v, err := mem.VirtualMemory(); err == nil {
+	v, memErr := mem.VirtualMemory()
+	if memErr != nil {
+		v, memErr = illumosVirtualMemory()
+	}
+	if memErr == nil {
 		// swap
 		systemStats.Swap = utils.BytesToGigabytes(v.SwapTotal)
 		systemStats.SwapUsed = utils.BytesToGigabytes(v.SwapTotal - v.SwapFree - v.SwapCached)
