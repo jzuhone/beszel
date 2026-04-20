@@ -180,7 +180,8 @@ export default function InfoBar({
 							)}
 						</Tooltip>
 
-						{systemInfo.map(({ value, label, Icon, hide }) => {
+						{systemInfo.map((item, index) => {
+							const { value, label, Icon, hide } = item
 							if (hide || !value) {
 								return null
 							}
@@ -190,7 +191,7 @@ export default function InfoBar({
 								</div>
 							)
 							return (
-								<div key={value} className="contents">
+								<div key={index} className="contents">
 									<Separator orientation="vertical" className="h-4 bg-primary/30" />
 									{label ? (
 										<Tooltip delayDuration={100}>
