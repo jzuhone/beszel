@@ -104,7 +104,7 @@ export default function InfoBar({
 				hide: hostname === system.host || hostname === system.name,
 			},
 			{ value: secondsToUptimeString(system.info.u), Icon: ClockArrowUp, label: t`Uptime`, hide: !system.info.u },
-			osInfo[os],
+			osInfo[os as keyof typeof osInfo],
 			{
 				value: cpuModel,
 				Icon: CpuIcon,
@@ -128,7 +128,7 @@ export default function InfoBar({
 			})
 		}
 
-		return info
+		return info.filter((item) => item !== undefined)
 	}, [system, details, t])
 
 	let translatedStatus: string = system.status
