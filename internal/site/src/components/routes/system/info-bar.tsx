@@ -23,7 +23,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { FreeBsdIcon, TuxIcon, WebSocketIcon, WindowsIcon } from "@/components/ui/icons"
+import { FreeBsdIcon, SunIcon, TuxIcon, WebSocketIcon, WindowsIcon } from "@/components/ui/icons"
 import { Separator } from "@/components/ui/separator"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { ConnectionType, connectionTypeLabels, Os, SystemStatus } from "@/lib/enums"
@@ -84,6 +84,11 @@ export default function InfoBar({
 			},
 			[Os.FreeBSD]: {
 				Icon: FreeBsdIcon,
+				value: osName || kernel,
+				label: osName ? kernel : undefined,
+			},
+			[Os.Illumos]: {
+				Icon: SunIcon,
 				value: osName || kernel,
 				label: osName ? kernel : undefined,
 			},

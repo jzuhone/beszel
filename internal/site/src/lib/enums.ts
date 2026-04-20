@@ -4,6 +4,7 @@ export enum Os {
 	Darwin,
 	Windows,
 	FreeBSD,
+	Illumos,
 }
 
 /** Type of chart */
